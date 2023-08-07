@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.1.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>RemomaxBE</artifactId>
@@ -48,11 +48,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<version>3.1.2</version>
+<!--			<scope>provided</scope>-->
 		</dependency>
 
 	</dependencies>
 
 	<build>
+		<finalName>RemomaxBE</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

@@ -2,11 +2,17 @@ package com.example.RemomaxBE;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class RemomaxBEApplication {
+public class RemomaxBEApplication extends SpringBootServletInitializer {
 
-
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application)
+	{
+		return application.sources(RemomaxBEApplication.class);
+	}
 	public static void main(String[] args) {
 		SpringApplication.run(RemomaxBEApplication.class, args);
 	}
