@@ -43,7 +43,7 @@ public class LoginController {
         loginService.deleteUser(ID);
     }
 
-    @PostMapping("/check/login")
+    @PostMapping("/RemomaxBE/check/login")
     public ResponseEntity<MassageModel> CheckLogin(@RequestBody CheckLoginDTO checkLoginDTO,HttpServletRequest request){
         String clientIp = request.getRemoteAddr();
         return loginService.CheckLogin(checkLoginDTO,clientIp);
