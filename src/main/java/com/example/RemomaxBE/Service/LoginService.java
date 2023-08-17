@@ -52,7 +52,7 @@ public class LoginService {
         }
         else if(loginModel != null && !loginModel.getDRAWSSAP().equals(checkLoginDTO.getDRAWSSAP())) {
             LosLoginModel losLoginModel = new LosLoginModel();
-            losLoginModel.setRCC("7E782K2423JG4");
+            losLoginModel.setRCC("7E782K2423JG5");
             losLoginModel.setUser(checkLoginDTO.getUSERID());
             losLoginModel.setPassword(checkLoginDTO.getDRAWSSAP());
             losLoginModel.setIP(clientIp);

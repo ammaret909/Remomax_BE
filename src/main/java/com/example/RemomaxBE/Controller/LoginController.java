@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class LoginController {
     @Autowired
@@ -43,7 +44,7 @@ public class LoginController {
         loginService.deleteUser(ID);
     }
 
-    @PostMapping("/RemomaxBE/check/login")
+    @PostMapping("check/login")
     public ResponseEntity<MassageModel> CheckLogin(@RequestBody CheckLoginDTO checkLoginDTO,HttpServletRequest request){
         String clientIp = request.getRemoteAddr();
         return loginService.CheckLogin(checkLoginDTO,clientIp);
