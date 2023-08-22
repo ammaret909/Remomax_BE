@@ -14,6 +14,8 @@ import java.util.List;
 public class MassageService {
     @Autowired
     MassageRepository massageRepository;
+    @Autowired
+    RCCService rccService;
 
     public List<MassageModel> getAllMassage() {
         return massageRepository.findAll();
@@ -25,7 +27,7 @@ public class MassageService {
 
     public MassageModel saveMassage(MassageDTO massageDTO) {
         MassageModel massageModel = new MassageModel();
-        massageModel.setRCC(massageDTO.getRCC());
+        massageModel.setRCC(rccService.createRcc().getCheck_rcc());
         massageModel.setMassage(massageDTO.getMassage());
         return massageRepository.save(massageModel);
     }

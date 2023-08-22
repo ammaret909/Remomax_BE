@@ -16,10 +16,8 @@ public class LosLoginModel {
     private String password;
     @Column(name = "IPin")
     private String IP;
-    @Column(name = "checked")
-    private String checked;
     @Column(name = "seqlose")
-    private String checkLogin;
+    private int checkLogin;
     @Column(name = "alert")
     private String alert;
     @Column(name = "approveby")
@@ -36,12 +34,11 @@ public class LosLoginModel {
     public LosLoginModel() {
     }
 
-    public LosLoginModel(String rcc, String user, String password, String IP, String checked, String checkLogin, String alert, String approveby, String approvedate, String ractive, String remark, String ristory) {
+    public LosLoginModel(String rcc, String user, String password, String IP, int checkLogin, String alert, String approveby, String approvedate, String ractive, String remark, String ristory) {
         this.rcc = rcc;
         this.user = user;
         this.password = password;
         this.IP = IP;
-        this.checked = checked;
         this.checkLogin = checkLogin;
         this.alert = alert;
         this.approveby = approveby;
@@ -51,11 +48,11 @@ public class LosLoginModel {
         this.ristory = ristory;
     }
 
-    public String getRCC() {
+    public String getRcc() {
         return rcc;
     }
 
-    public void setRCC(String rcc) {
+    public void setRcc(String rcc) {
         this.rcc = rcc;
     }
 
@@ -83,19 +80,11 @@ public class LosLoginModel {
         this.IP = IP;
     }
 
-    public String getChecked() {
-        return checked;
-    }
-
-    public void setChecked(String checked) {
-        this.checked = checked;
-    }
-
-    public String getCheckLogin() {
+    public int getCheckLogin() {
         return checkLogin;
     }
 
-    public void setCheckLogin(String checkLogin) {
+    public void setCheckLogin(int checkLogin) {
         this.checkLogin = checkLogin;
     }
 
