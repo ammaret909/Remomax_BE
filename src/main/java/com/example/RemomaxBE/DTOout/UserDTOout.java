@@ -1,18 +1,31 @@
-package com.example.RemomaxBE.DTO;
+package com.example.RemomaxBE.DTOout;
 
-public class LoginDTO {
+import jakarta.persistence.Column;
+
+public class UserDTOout {
+    private String RCC;
     private String fullname;
     private String USERID;
     private String DRAWSSAP;
     private String level;
-    public LoginDTO() {
+
+    public UserDTOout() {
     }
 
-    public LoginDTO(String fullname, String USERID, String DRAWSSAP, String level) {
+    public UserDTOout(String RCC, String fullname, String USERID, String DRAWSSAP, String level) {
+        this.RCC = RCC;
         this.fullname = fullname;
         this.USERID = USERID;
         this.DRAWSSAP = DRAWSSAP;
         this.level = level;
+    }
+
+    public String getRCC() {
+        return RCC;
+    }
+
+    public void setRCC(String RCC) {
+        this.RCC = RCC;
     }
 
     public String getFullname() {
@@ -43,7 +56,7 @@ public class LoginDTO {
         return level;
     }
 
-    public void setLevel(String lavel) {
-        this.level = lavel;
+    public void setLevel(String level) {
+        this.level = level;
     }
 }

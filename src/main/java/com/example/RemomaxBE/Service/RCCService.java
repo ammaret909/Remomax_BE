@@ -115,16 +115,33 @@ public class RCCService {
     public TimeRCCDTOout decodeRCC(DecodeRCCDTO decodeRCCDTO) {
         String rcc = decodeRCCDTO.getRCC();
         String year = String.valueOf(Integer.parseInt(rcc.substring(0,3),16));
-        String month = String.valueOf(Integer.parseInt(rcc.substring(3,4),16));
+        String month = String.valueOf(decodeMonth(Integer.parseInt(rcc.substring(3,4),16)));
         String day = String.valueOf(decodeDay(rcc.substring(4,5)));
         String hour = String.valueOf(decodeHour(rcc.substring(5,6)));
         String minute = rcc.substring(6,8);
         String second = rcc.substring(8,10);
-        String time = year+ "/" + month + "/" + day + "/" + " " + hour + ":" +minute + ":" + second;
+        String time = day + "/" + month + "/" + year + " " + hour + ":" + minute + ":" + second;
         TimeRCCDTOout timeRCCDTOout = new TimeRCCDTOout();
         timeRCCDTOout.setTime(time);
-
         return timeRCCDTOout;
+    }
+
+    public String decodeRCCGetString(String rcc) {
+        String year = String.valueOf(Integer.parseInt(rcc.substring(0,3),16));
+        String month = String.valueOf(decodeMonth(Integer.parseInt(rcc.substring(3,4),16)));
+        String day = String.valueOf(decodeDay(rcc.substring(4,5)));
+        String hour = String.valueOf(decodeHour(rcc.substring(5,6)));
+        String minute = rcc.substring(6,8);
+        String second = rcc.substring(8,10);
+        String time = day + "/" + month + "/" + year + " " + hour + ":" + minute + ":" + second;
+        return time;
+    }
+
+    public String decodeMonth(int month){
+        if(month <= 9){
+            return "0" + month;
+        }
+        return String.valueOf(month);
     }
 
     public String decodeDay(String day) {
@@ -134,13 +151,16 @@ public class RCCService {
             int finalNumber = number + 9;
             return String.valueOf(finalNumber);
         } else {
-            return day;
+            return "0" + day;
         }
     }
 
     public String decodeHour(String hour) {
             char convertToChar = hour.charAt(0) ;
             int hourTime = convertToChar - 'A' + 1;
+            if(hourTime <= 9) {
+                return "0" + hourTime;
+            }
             return String.valueOf(hourTime);
     }
 
