@@ -8,7 +8,7 @@ public class ConvertAspModel {
     @Id
     private String rcc;
     @Column(name = "name_page")
-    private String name_page;
+    private String namePage;
     @Column(name = "title")
     private String title;
     @Column(name = "sub_title_1")
@@ -21,9 +21,9 @@ public class ConvertAspModel {
     public ConvertAspModel() {
     }
 
-    public ConvertAspModel(String rcc, String name_page, String title, String subTitleH1, String subTitleH2, String subTitleH3) {
+    public ConvertAspModel(String rcc, String namePage, String title, String subTitleH1, String subTitleH2, String subTitleH3) {
         this.rcc = rcc;
-        this.name_page = name_page;
+        this.namePage = namePage;
         this.title = title;
         this.subTitleH1 = subTitleH1;
         this.subTitleH2 = subTitleH2;
@@ -38,12 +38,12 @@ public class ConvertAspModel {
         this.rcc = rcc;
     }
 
-    public String getName_page() {
-        return name_page;
+    public String getNamePage() {
+        return namePage;
     }
 
-    public void setName_page(String name_page) {
-        this.name_page = name_page;
+    public void setNamePage(String namePage) {
+        this.namePage = namePage;
     }
 
     public String getTitle() {

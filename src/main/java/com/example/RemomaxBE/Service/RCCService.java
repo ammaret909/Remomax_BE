@@ -30,7 +30,8 @@ public class RCCService {
         String preRcc = year + month + day + hour + minute + second;
 
         RCCModel rccModelCheck = rccRepository.findById(1L).orElse(null);
-        if(rccModelCheck == null || !preRcc.equals(rccModelCheck.getCheck_rcc())) {
+        String lastTwoCharacters = rccModelCheck.getCheck_rcc().substring(0,rccModelCheck.getCheck_rcc().length() - 2);
+        if(rccModelCheck == null || !preRcc.equals(lastTwoCharacters)) {
             rccModel.setId(1L);
             String special = "AA";
             String finalRcc = preRcc + special;

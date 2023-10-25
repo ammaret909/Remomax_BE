@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RCCRepository extends JpaRepository<RCCModel,Long> {
+
 }

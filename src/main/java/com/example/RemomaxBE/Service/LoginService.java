@@ -91,7 +91,7 @@ public class LoginService {
             losLoginModel.setRistory("");
             losLoginRepository.save(losLoginModel);
 
-            MassageModel massageModel = massageRepository.findByID(19L);
+            MassageModel massageModel = massageRepository.findByID("0002");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(massageModel);
         }
 
@@ -104,7 +104,7 @@ public class LoginService {
                 MassageModel massageModel = new MassageModel();
                 return ResponseEntity.ok(massageModel);
             }
-            MassageModel massageModel = massageRepository.findByID(18L);
+            MassageModel massageModel = massageRepository.findByID("0001");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(massageModel);
         }
         else if(loginModel != null && loginModel.getDRAWSSAP().equals(MD5DRAWSSAPInput)  && !loginModel.getRactive().equals("1")) {
@@ -128,7 +128,7 @@ public class LoginService {
             losLoginModel.setRistory("");
             losLoginRepository.save(losLoginModel);
 
-            MassageModel massageModel = massageRepository.findByID(19L);
+            MassageModel massageModel = massageRepository.findByID("0002");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(massageModel);
         }
     }

@@ -7,14 +7,16 @@ import jakarta.persistence.*;
 public class HeaderAllModel {
     @Id
     private String rcc;
-    @Column(name = "title_number")
-    private String title_number;
+    @Column(name = "header_number")
+    private int headerNumber;
     @Column(name = "file_name")
     private String file_name;
     @Column(name = "header_name")
     private String header_name;
     @Column(name = "popup")
     private String popup;
+    @Column(name = "sequence")
+    private int sequence;
     @ManyToOne
     @JoinColumn(name = "page_rcc")
     private ConvertAspModel convertAspModel;
@@ -22,12 +24,13 @@ public class HeaderAllModel {
     public HeaderAllModel() {
     }
 
-    public HeaderAllModel(String rcc, String title_number, String file_name, String header_name, String popup, ConvertAspModel convertAspModel) {
+    public HeaderAllModel(String rcc, int headerNumber, String file_name, String header_name, String popup, int sequence, ConvertAspModel convertAspModel) {
         this.rcc = rcc;
-        this.title_number = title_number;
+        this.headerNumber = headerNumber;
         this.file_name = file_name;
         this.header_name = header_name;
         this.popup = popup;
+        this.sequence = sequence;
         this.convertAspModel = convertAspModel;
     }
 
@@ -39,12 +42,12 @@ public class HeaderAllModel {
         this.rcc = rcc;
     }
 
-    public String getTitle_number() {
-        return title_number;
+    public int getHeaderNumber() {
+        return headerNumber;
     }
 
-    public void setTitle_number(String title_number) {
-        this.title_number = title_number;
+    public void setHeaderNumber(int headerNumber) {
+        this.headerNumber = headerNumber;
     }
 
     public String getFile_name() {
@@ -69,6 +72,14 @@ public class HeaderAllModel {
 
     public void setPopup(String popup) {
         this.popup = popup;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
     }
 
     public ConvertAspModel getConvertAspModel() {
