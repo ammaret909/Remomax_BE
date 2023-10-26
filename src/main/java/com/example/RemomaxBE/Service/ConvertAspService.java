@@ -268,17 +268,6 @@ public class ConvertAspService {
             if(dto.getFile_name() == null && dto.getHeader_name() == null && dto.getRcc() != ""){
                 System.out.println("null");
             }
-            else if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() == null) {
-                HeaderAllModel headerAllModel = new HeaderAllModel();
-                headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
-                headerAllModel.setHeaderNumber(1);
-                headerAllModel.setFile_name(dto.getFile_name());
-                headerAllModel.setHeader_name(dto.getHeader_name());
-                headerAllModel.setPopup(dto.getPopup());
-                headerAllModel.setSequence(sequence = sequence + 1);
-                headerAllModel.setConvertAspModel(dto.getConvertAspModel());
-                headerAllRepository.save(headerAllModel);
-            }
             else if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() != ""){
                 HeaderAllModel headerAllModel = new HeaderAllModel();
                 headerAllModel.setRcc(dto.getRcc());
@@ -288,6 +277,18 @@ public class ConvertAspService {
                 headerAllModel.setPopup(dto.getPopup());
                 headerAllModel.setSequence(sequence = sequence + 1);
                 headerAllModel.setConvertAspModel(dto.getConvertAspModel());
+                headerAllRepository.save(headerAllModel);
+            }
+            // if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() == null)
+            else {
+                HeaderAllModel headerAllModel = new HeaderAllModel();
+                headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
+                headerAllModel.setHeaderNumber(1);
+                headerAllModel.setFile_name(dto.getFile_name());
+                headerAllModel.setHeader_name(dto.getHeader_name());
+                headerAllModel.setPopup(dto.getPopup());
+                headerAllModel.setSequence(sequence = sequence + 1);
+                headerAllModel.setConvertAspModel(convertAspModel);
                 headerAllRepository.save(headerAllModel);
             }
         }
@@ -297,17 +298,6 @@ public class ConvertAspService {
             if(dto.getFile_name() == null && dto.getHeader_name() == null && dto.getRcc() != ""){
                 System.out.println("null");
             }
-            else if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() == null) {
-                HeaderAllModel headerAllModel = new HeaderAllModel();
-                headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
-                headerAllModel.setHeaderNumber(2);
-                headerAllModel.setFile_name(dto.getFile_name());
-                headerAllModel.setHeader_name(dto.getHeader_name());
-                headerAllModel.setPopup(dto.getPopup());
-                headerAllModel.setSequence(sequence = sequence + 1);
-                headerAllModel.setConvertAspModel(dto.getConvertAspModel());
-                headerAllRepository.save(headerAllModel);
-            }
             else if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() != ""){
                 HeaderAllModel headerAllModel = new HeaderAllModel();
                 headerAllModel.setRcc(dto.getRcc());
@@ -317,6 +307,18 @@ public class ConvertAspService {
                 headerAllModel.setPopup(dto.getPopup());
                 headerAllModel.setSequence(sequence = sequence + 1);
                 headerAllModel.setConvertAspModel(dto.getConvertAspModel());
+                headerAllRepository.save(headerAllModel);
+            }
+            //if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() == null)
+            else  {
+                HeaderAllModel headerAllModel = new HeaderAllModel();
+                headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
+                headerAllModel.setHeaderNumber(2);
+                headerAllModel.setFile_name(dto.getFile_name());
+                headerAllModel.setHeader_name(dto.getHeader_name());
+                headerAllModel.setPopup(dto.getPopup());
+                headerAllModel.setSequence(sequence = sequence + 1);
+                headerAllModel.setConvertAspModel(convertAspModel);
                 headerAllRepository.save(headerAllModel);
             }
         }
@@ -326,17 +328,6 @@ public class ConvertAspService {
             if(dto.getFile_name() == null && dto.getHeader_name() == null && dto.getRcc() != ""){
                 System.out.println("null");
             }
-            else if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() == null) {
-                HeaderAllModel headerAllModel = new HeaderAllModel();
-                headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
-                headerAllModel.setHeaderNumber(3);
-                headerAllModel.setFile_name(dto.getFile_name());
-                headerAllModel.setHeader_name(dto.getHeader_name());
-                headerAllModel.setPopup(dto.getPopup());
-                headerAllModel.setSequence(sequence = sequence + 1);
-                headerAllModel.setConvertAspModel(dto.getConvertAspModel());
-                headerAllRepository.save(headerAllModel);
-            }
             else if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() != ""){
                 HeaderAllModel headerAllModel = new HeaderAllModel();
                 headerAllModel.setRcc(dto.getRcc());
@@ -348,9 +339,20 @@ public class ConvertAspService {
                 headerAllModel.setConvertAspModel(dto.getConvertAspModel());
                 headerAllRepository.save(headerAllModel);
             }
+            //if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() == null)
+            else  {
+                HeaderAllModel headerAllModel = new HeaderAllModel();
+                headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
+                headerAllModel.setHeaderNumber(3);
+                headerAllModel.setFile_name(dto.getFile_name());
+                headerAllModel.setHeader_name(dto.getHeader_name());
+                headerAllModel.setPopup(dto.getPopup());
+                headerAllModel.setSequence(sequence = sequence + 1);
+                headerAllModel.setConvertAspModel(convertAspModel);
+                headerAllRepository.save(headerAllModel);
+            }
         }
 
-//        return redirectPageDTOout;
     }
 
     public ConvertAspModel createPage(CreatePageDTO createPageDTO) {
