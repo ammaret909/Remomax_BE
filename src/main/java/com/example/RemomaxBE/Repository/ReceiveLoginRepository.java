@@ -11,11 +11,6 @@ import java.util.List;
 @Repository
 public interface ReceiveLoginRepository extends JpaRepository<ReceiveLoginModel,String> {
 
-
-//    List<ReceiveLoginModel> findAllRccu();
-//    @Query(value = "SELECT * FROM ulogio WHERE rcc IN (SELECT MAX(rcc) FROM ulogio GROUP BY rccu ODER BY) AND in_or_out = 1",nativeQuery = true)
-//    @Query(value = "SELECT * FROM ulogio TOP 1",nativeQuery = true)
-//    ReceiveLoginModel getTop1(String rccu);
     @Query(value = "SELECT  * FROM ulogio WHERE rccu = :rcc AND in_or_out = '0'  order by rcc desc limit 1",nativeQuery = true)
     ReceiveLoginModel findFirstLogin(String rcc);
     @Query(value = "SELECT  * FROM ulogio WHERE rccu = :rcc AND in_or_out = '1'  order by rcc desc limit 1",nativeQuery = true)
@@ -24,4 +19,9 @@ public interface ReceiveLoginRepository extends JpaRepository<ReceiveLoginModel,
     String findCountLogin(String rcc);
     @Query(value = "SELECT count(rcc) as rcc1 FROM ulogio WHERE rccu = :rcc AND in_or_out = '1'  group by rccu",nativeQuery = true)
     String findCountLogout(String rcc);
+
+    @Query(value = "SELECT  * FROM ulogio WHERE rccu = :rcc AND in_or_out = '0' AND rcc < (SELECT MAX(rcc) FROM ulogio WHERE rccu = :rcc AND in_or_out = '0' AND ip = :ip) order by rcc desc limit 1",nativeQuery = true)
+    ReceiveLoginModel findLoginByLogout(String rcc,String ip);
+//    @Query(value = "SELECT  * FROM ulogio WHERE rccu = :rcc AND in_or_out = '1' AND rcc < (SELECT MAX(rcc) FROM ulogio WHERE rccu = :rcc AND in_or_out = '0') order by rcc desc limit 1",nativeQuery = true)
+//    ReceiveLoginModel findSecondLogout(String rcc);
 }

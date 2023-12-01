@@ -3,6 +3,8 @@ package com.example.RemomaxBE.Controller;
 import com.example.RemomaxBE.DTO.CheckLoginDTO;
 import com.example.RemomaxBE.DTO.LoginDTO;
 import com.example.RemomaxBE.DTO.RCCRactiveDTO;
+import com.example.RemomaxBE.DTO.SearchDTO;
+import com.example.RemomaxBE.DTOout.LoginTimeDTOout;
 import com.example.RemomaxBE.DTOout.LosloginDTOout;
 import com.example.RemomaxBE.DTOout.UserDTOout;
 import com.example.RemomaxBE.Model.LoginModel;
@@ -68,8 +70,13 @@ public class LoginController {
 
     @GetMapping("level")
     public List<LoginModel> sortByRole(){
-
         return loginService.sortByLevle();
+    }
+
+    @PostMapping("login/time")
+    public LoginTimeDTOout timeLogin(@RequestBody SearchDTO searchDTO,HttpServletRequest request){
+        String clientIp = request.getRemoteAddr();
+        return loginService.timeLogin(searchDTO,clientIp);
     }
 
 }

@@ -45,7 +45,6 @@ public class ReceiveLoginService {
         List<LoginModel> loginModels = loginRepository.findAll();
         List<LoginAndLogoutDashboardDTOout> loginAndLogoutDashboardDTOouts = new ArrayList<>();
 
-
         for (LoginModel loginModel : loginModels) {
             LoginAndLogoutDashboardDTOout loginDataOfList = new LoginAndLogoutDashboardDTOout();
             loginDataOfList.setUSERID(loginModel.getUSERID());

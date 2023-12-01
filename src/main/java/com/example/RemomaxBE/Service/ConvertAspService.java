@@ -213,6 +213,175 @@ public class ConvertAspService {
         return convertAspModel;
     }
 
+    public ConvertAspModel convertAspRPL(MultipartFile file) throws IOException {
+        ConvertAspModel convertAspModel = new ConvertAspModel();
+        int sequence = 0;
+
+        Resource resource = file.getResource();
+        byte[] bytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
+        String content = new String(bytes, "tis-620" );
+
+        String H3patternFileName = "<%'\\*\\*\\*\\*\\* LINK3 \\*\\*\\*\\*\\*%>(.*?)\r\n\">";
+//        String H3patternFileName = "<%'\\*\\*\\*\\*\\* LINK3 \\*\\*\\*\\*\\*%>(.*?).asp";
+        Pattern H3regexFileName = Pattern.compile(H3patternFileName);
+        Matcher H3matcherFileName = H3regexFileName.matcher(content);
+
+        String H3patternName = "<%'\\*\\*\\*\\*\\* ITEM3 \\*\\*\\*\\*\\*%>(.*?)\r\n<%";
+        Pattern H3regexName = Pattern.compile(H3patternName, Pattern.DOTALL);
+        Matcher H3matcherName = H3regexName.matcher(content);
+
+        String H1patternFileName = "<%'\\*\\*\\*\\*\\* LINK1 \\*\\*\\*\\*\\*%>(.*?)\">";
+//        String H1patternFileName = "<%'\\*\\*\\*\\*\\* LINK1 \\*\\*\\*\\*\\*%>(.*?).asp";
+        Pattern H1regexFileName = Pattern.compile(H1patternFileName, Pattern.DOTALL);
+        Matcher H1matcherFileName = H1regexFileName.matcher(content);
+
+        String H1patternName = "<%'\\*\\*\\*\\*\\* ITEM1 \\*\\*\\*\\*\\*%>(.*?)\r\n<%";
+        Pattern H1regexName = Pattern.compile(H1patternName, Pattern.DOTALL);
+        Matcher H1matcherName = H1regexName.matcher(content);
+
+        String H2patternFileName = "<%'\\*\\*\\*\\*\\* LINK2 \\*\\*\\*\\*\\*%>(.*?)\r\n\">";
+//        String H2patternFileName = "<%'\\*\\*\\*\\*\\* LINK2 \\*\\*\\*\\*\\*%>(.*?).asp";
+        Pattern H2regexFileName = Pattern.compile(H2patternFileName);
+        Matcher H2matcherFileName = H2regexFileName.matcher(content);
+
+        String H2patternName = "<%'\\*\\*\\*\\*\\* ITEM2 \\*\\*\\*\\*\\*%>(.*?)\r\n<%";
+        Pattern H2regexName = Pattern.compile(H2patternName, Pattern.DOTALL);
+        Matcher H2matcherName = H2regexName.matcher(content);
+
+        String Header3 = "<%'\\*\\*\\*\\*\\* Sub Header3 \\*\\*\\*\\*\\*%>(.*?)\r\n</span>";
+        Pattern H3regexHeader = Pattern.compile(Header3, Pattern.DOTALL);
+        Matcher H3matcherHeader = H3regexHeader.matcher(content);
+
+        String Header1 = "<%'\\*\\*\\*\\*\\* Sub Header1 \\*\\*\\*\\*\\*%>(.*?)\r\n</p>";
+        Pattern H1regexHeader = Pattern.compile(Header1, Pattern.DOTALL);
+        Matcher H1matcherHeader = H1regexHeader.matcher(content);
+
+        String Header2 = "<%'\\*\\*\\*\\*\\* Sub Header2 \\*\\*\\*\\*\\*%>(.*?)\r\n</p>";
+        Pattern H2regexHeader = Pattern.compile(Header2, Pattern.DOTALL);
+        Matcher H2matcherHeader = H2regexHeader.matcher(content);
+
+        String Header = "<%'\\*\\*\\*\\*\\* Header \\*\\*\\*\\*\\*%>(.*?)\r\n</span>";
+        Pattern regexHeader = Pattern.compile(Header, Pattern.DOTALL);
+        Matcher matcherHeader = regexHeader.matcher(content);
+
+        convertAspModel.setRcc(rccService.createRcc().getCheck_rcc());
+        String fileName = file.getOriginalFilename().substring(0,file.getOriginalFilename().length() - 4);
+        convertAspModel.setNamePage(fileName);
+
+        if(H3matcherHeader.find()){
+            String H3subTitle = H3matcherHeader.group(1);
+            convertAspModel.setSubTitleH3(H3subTitle);
+        }
+
+        if(H1matcherHeader.find()){
+            String H1subTitle = H1matcherHeader.group(1);
+            convertAspModel.setSubTitleH1(H1subTitle);
+        }
+
+        if(H2matcherHeader.find()){
+            String H2subTitle = H2matcherHeader.group(1);
+            convertAspModel.setSubTitleH2(H2subTitle);
+        }
+
+        if(matcherHeader.find()){
+            String Title = matcherHeader.group(1);
+            convertAspModel.setTitle(Title);
+        }
+
+        convertAspRepository.save(convertAspModel);
+
+        while (H3matcherFileName.find() && H3matcherName.find()) {
+            HeaderAllModel headerAllModel = new HeaderAllModel();
+
+            String H3fileName = H3matcherFileName.group(1);
+            String H3Name = H3matcherName.group(1);
+
+
+            if(H3fileName.length() >= 6) {
+                String cutAsp = H3fileName.substring(0,H3fileName.length() - 4);
+                String lastTwoCharacters = cutAsp.substring(cutAsp.length() - 2);
+                if(lastTwoCharacters.equals(".a")){
+                    cutAsp = H3fileName.substring(0,H3fileName.length() - 8);
+                }
+                headerAllModel.setFile_name(cutAsp);
+            }
+            else {
+                headerAllModel.setFile_name(H3fileName);
+            }
+
+            sequence = sequence + 1;
+
+            headerAllModel.setSequence(sequence);
+            headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
+            headerAllModel.setHeader_name(H3Name);
+            headerAllModel.setPopup("");
+            headerAllModel.setHeaderNumber(3);
+            headerAllModel.setConvertAspModel(convertAspRepository.findById(convertAspModel.getRcc()).orElse(null));
+            headerAllRepository.save(headerAllModel);
+        }
+
+        sequence = 0;
+        while (H1matcherFileName.find() && H1matcherName.find()) {
+            HeaderAllModel headerAllModel = new HeaderAllModel();
+
+            String H1fileName = H1matcherFileName.group(1);
+            String H1Name = H1matcherName.group(1);
+
+            if(H1fileName.length() >= 6) {
+                String cutAsp = H1fileName.substring(0,H1fileName.length() - 6);
+                String lastTwoCharacters = cutAsp.substring(cutAsp.length() - 2);
+                if(lastTwoCharacters.equals(".a")){
+                    cutAsp = H1fileName.substring(0,H1fileName.length() - 8);
+                }
+                headerAllModel.setFile_name(cutAsp);
+            }
+            else {
+                headerAllModel.setFile_name(H1fileName);
+            }
+
+            sequence = sequence + 1;
+
+            headerAllModel.setSequence(sequence);
+            headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
+            headerAllModel.setHeader_name(H1Name);
+            headerAllModel.setPopup("");
+            headerAllModel.setHeaderNumber(1);
+            headerAllModel.setConvertAspModel(convertAspRepository.findById(convertAspModel.getRcc()).orElse(null));
+            headerAllRepository.save(headerAllModel);
+            System.out.println(headerAllModel.getPopup());
+        }
+
+        sequence = 0;
+        while (H2matcherFileName.find() && H2matcherName.find() ) {
+            HeaderAllModel headerAllModel = new HeaderAllModel();
+
+            String H2fileName = H2matcherFileName.group(1);
+            String H2Name = H2matcherName.group(1);
+
+            if(H2fileName.length() >= 6) {
+                String cutAsp = H2fileName.substring(0,H2fileName.length() - 4);
+                String lastTwoCharacters = cutAsp.substring(cutAsp.length() - 2);
+                if(lastTwoCharacters.equals(".a")){
+                    cutAsp = H2fileName.substring(0,H2fileName.length() - 8);
+                }
+                headerAllModel.setFile_name(cutAsp);
+            }
+            else {
+                headerAllModel.setFile_name(H2fileName);
+            }
+            sequence = sequence + 1;
+
+            headerAllModel.setSequence(sequence);
+            headerAllModel.setRcc(rccService.createRcc().getCheck_rcc());
+            headerAllModel.setHeader_name(H2Name);
+            headerAllModel.setPopup("");
+            headerAllModel.setHeaderNumber(2);
+            headerAllModel.setConvertAspModel(convertAspRepository.findById(convertAspModel.getRcc()).orElse(null));
+            headerAllRepository.save(headerAllModel);
+        }
+        return convertAspModel;
+    }
+
     public RedirectPageDTOout showPage(String pageName) {
         RedirectPageDTOout convertAspDTOout = new RedirectPageDTOout();
         ConvertAspModel page = convertAspRepository.findByNamePage(pageName);
@@ -229,6 +398,8 @@ public class ConvertAspService {
 
         return convertAspDTOout;
     }
+
+
 
     public RedirectPageDTOout editPage(String rcc){
         RedirectPageDTOout redirectPageDTOout = new RedirectPageDTOout();
@@ -266,7 +437,7 @@ public class ConvertAspService {
         int sequence = 0;
         for (HeaderAllModel dto : redirectPageDTOout.getHeader1DTOoutList()){
             if(dto.getFile_name() == null && dto.getHeader_name() == null && dto.getRcc() != ""){
-                System.out.println("null");
+
             }
             else if(dto.getFile_name() != "" && dto.getHeader_name() != "" && dto.getRcc() != ""){
                 HeaderAllModel headerAllModel = new HeaderAllModel();

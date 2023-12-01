@@ -2,6 +2,7 @@ package com.example.RemomaxBE.Repository;
 
 import com.example.RemomaxBE.Model.LoginModel;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface LoginRepository extends JpaRepository<LoginModel,String> {
     LoginModel findByRCC(String RCC);
 
     List<LoginModel> findAllByRactive(String ractive);
+
+    List<LoginModel> findByLevelStartingWith(String search);
 }

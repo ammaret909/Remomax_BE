@@ -1,17 +1,17 @@
 package com.example.RemomaxBE.Service;
 
-import com.example.RemomaxBE.DTO.CheckLoginDTO;
-import com.example.RemomaxBE.DTO.DecodeRCCDTO;
-import com.example.RemomaxBE.DTO.LoginDTO;
-import com.example.RemomaxBE.DTO.RCCRactiveDTO;
+import com.example.RemomaxBE.DTO.*;
+import com.example.RemomaxBE.DTOout.LoginTimeDTOout;
 import com.example.RemomaxBE.DTOout.LosloginDTOout;
 import com.example.RemomaxBE.DTOout.UserDTOout;
 import com.example.RemomaxBE.Model.LoginModel;
 import com.example.RemomaxBE.Model.LosLoginModel;
 import com.example.RemomaxBE.Model.MassageModel;
+import com.example.RemomaxBE.Model.ReceiveLoginModel;
 import com.example.RemomaxBE.Repository.LoginRepository;
 import com.example.RemomaxBE.Repository.LosLoginRepository;
 import com.example.RemomaxBE.Repository.MassageRepository;
+import com.example.RemomaxBE.Repository.ReceiveLoginRepository;
 import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class LoginService {
@@ -37,6 +39,8 @@ public class LoginService {
     RCCService rccService;
     @Autowired
     ReceiveLoginService receiveLoginService;
+    @Autowired
+    ReceiveLoginRepository receiveLoginRepository;
 
     public LoginModel saveUser(LoginDTO loginDTO) throws NoSuchAlgorithmException {
         LoginModel loginModel = new LoginModel();
@@ -201,5 +205,27 @@ public class LoginService {
             loginModel.setRactive("1");
             loginRepository.save(loginModel);
         }
+    }
+
+    public LoginTimeDTOout timeLogin(SearchDTO searchDTO, String clientIp) {
+        LoginTimeDTOout loginTimeDTOout = new LoginTimeDTOout();
+        loginTimeDTOout.setUser(loginRepository.findByRCC(searchDTO.getSearch()).getUSERID());
+        loginTimeDTOout.setIp(clientIp);
+        ReceiveLoginModel receiveLoginModelLogout = receiveLoginRepository.findFirstLogout(searchDTO.getSearch());
+        String LogoutTime = rccService.decodeRCCGetString(receiveLoginModelLogout.getRCC());
+        String LoginTime = rccService.decodeRCCGetString(receiveLoginRepository.findLoginByLogout(searchDTO.getSearch(),receiveLoginModelLogout.getIP()).getRCC());
+        loginTimeDTOout.setLoginTime(LoginTime);
+        loginTimeDTOout.setLogoutTime(LogoutTime);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime dateTime1 = LocalDateTime.parse(LoginTime, formatter);
+        LocalDateTime dateTime2 = LocalDateTime.parse(LogoutTime, formatter);
+
+        long secondsDifference = java.time.Duration.between(dateTime1,dateTime2).getSeconds();
+
+        long minutesDifference = secondsDifference / 60;
+
+        loginTimeDTOout.setUseTime(minutesDifference + " minute");
+        return loginTimeDTOout;
     }
 }
