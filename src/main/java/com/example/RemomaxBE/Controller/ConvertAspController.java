@@ -19,9 +19,13 @@ import java.util.List;
 public class ConvertAspController {
     @Autowired
     ConvertAspService convertAspService;
-    @PostMapping("/converts_asp")
+    @PostMapping("/converts/asp")
     public ConvertAspModel convertsAsp(@RequestParam("file") MultipartFile file) throws IOException {
         return convertAspService.convertAsp(file);
+    }
+    @PostMapping("/converts/asp/rpl")
+    public ConvertAspModel convertAspRPLOleVertion(@RequestParam("file") MultipartFile file) throws IOException {
+        return convertAspService.convertAspRPLOleVertion(file);
     }
     @GetMapping("/pages/{pageName}")
     public RedirectPageDTOout showPage(@PathVariable("pageName") String pageName) {

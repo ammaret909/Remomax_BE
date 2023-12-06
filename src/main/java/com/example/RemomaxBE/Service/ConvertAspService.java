@@ -213,7 +213,7 @@ public class ConvertAspService {
         return convertAspModel;
     }
 
-    public ConvertAspModel convertAspRPL(MultipartFile file) throws IOException {
+    public ConvertAspModel convertAspRPLOleVertion(MultipartFile file) throws IOException {
         ConvertAspModel convertAspModel = new ConvertAspModel();
         int sequence = 0;
 
@@ -226,7 +226,7 @@ public class ConvertAspService {
         Pattern H3regexFileName = Pattern.compile(H3patternFileName);
         Matcher H3matcherFileName = H3regexFileName.matcher(content);
 
-        String H3patternName = "<%'\\*\\*\\*\\*\\* ITEM3 \\*\\*\\*\\*\\*%>(.*?)\r\n<%";
+        String H3patternName = "<%'\\*\\*\\*\\*\\* ITEM3 \\*\\*\\*\\*\\*%>(.*?)\r\n</a>";
         Pattern H3regexName = Pattern.compile(H3patternName, Pattern.DOTALL);
         Matcher H3matcherName = H3regexName.matcher(content);
 
@@ -235,7 +235,7 @@ public class ConvertAspService {
         Pattern H1regexFileName = Pattern.compile(H1patternFileName, Pattern.DOTALL);
         Matcher H1matcherFileName = H1regexFileName.matcher(content);
 
-        String H1patternName = "<%'\\*\\*\\*\\*\\* ITEM1 \\*\\*\\*\\*\\*%>(.*?)\r\n<%";
+        String H1patternName = "<%'\\*\\*\\*\\*\\* ITEM1 \\*\\*\\*\\*\\*%>(.*?)\r\n</a>";
         Pattern H1regexName = Pattern.compile(H1patternName, Pattern.DOTALL);
         Matcher H1matcherName = H1regexName.matcher(content);
 
@@ -244,7 +244,7 @@ public class ConvertAspService {
         Pattern H2regexFileName = Pattern.compile(H2patternFileName);
         Matcher H2matcherFileName = H2regexFileName.matcher(content);
 
-        String H2patternName = "<%'\\*\\*\\*\\*\\* ITEM2 \\*\\*\\*\\*\\*%>(.*?)\r\n<%";
+        String H2patternName = "<%'\\*\\*\\*\\*\\* ITEM2 \\*\\*\\*\\*\\*%>(.*?)\r\n</a>";
         Pattern H2regexName = Pattern.compile(H2patternName, Pattern.DOTALL);
         Matcher H2matcherName = H2regexName.matcher(content);
 
