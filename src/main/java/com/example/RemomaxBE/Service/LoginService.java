@@ -114,7 +114,8 @@ public class LoginService {
         else if(loginModel != null && loginModel.getDRAWSSAP().equals(MD5DRAWSSAPInput)  && !loginModel.getRactive().equals("1")) {
             MassageModel massageModel = new MassageModel();
             massageModel.setRCC(loginModel.getRCC());
-            receiveLoginService.receivelLogin(loginModel,clientIp);
+            massageModel.setID(rccService.createRcc().getCheck_rcc());
+            receiveLoginService.receivelLogin(loginModel,clientIp,massageModel);
             return ResponseEntity.ok(massageModel);
         }
         else {
@@ -213,7 +214,8 @@ public class LoginService {
         loginTimeDTOout.setIp(clientIp);
         ReceiveLoginModel receiveLoginModelLogout = receiveLoginRepository.findFirstLogout(searchDTO.getSearch());
         String LogoutTime = rccService.decodeRCCGetString(receiveLoginModelLogout.getRCC());
-        String LoginTime = rccService.decodeRCCGetString(receiveLoginRepository.findLoginByLogout(searchDTO.getSearch(),receiveLoginModelLogout.getIP()).getRCC());
+        String LoginTime = rccService.decodeRCCGetString(receiveLoginRepository.findFirstLoginByRccLogin(receiveLoginModelLogout.getRccLogin()).getRCC());
+
         loginTimeDTOout.setLoginTime(LoginTime);
         loginTimeDTOout.setLogoutTime(LogoutTime);
 

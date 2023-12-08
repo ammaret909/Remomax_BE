@@ -17,15 +17,26 @@ public class ReceiveLoginModel {
     private String InOrOut;
     @Column(name = "ip")
     private String IP;
+    @Column(name = "rcc_login")
+    private String rccLogin;
 
     public ReceiveLoginModel() {
     }
 
-    public ReceiveLoginModel(String RCC, String RCCU, String inOrOut, String IP) {
+    public ReceiveLoginModel(String RCC, String RCCU, String inOrOut, String IP, String rccLogin) {
         this.RCC = RCC;
         this.RCCU = RCCU;
         InOrOut = inOrOut;
         this.IP = IP;
+        this.rccLogin = rccLogin;
+    }
+
+    public String getRccLogin() {
+        return rccLogin;
+    }
+
+    public void setRccLogin(String rccLogin) {
+        this.rccLogin = rccLogin;
     }
 
     public String getRCC() {

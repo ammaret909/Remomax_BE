@@ -4,6 +4,7 @@ import com.example.RemomaxBE.DTO.RCCRactiveDTO;
 import com.example.RemomaxBE.DTOout.LoginAndLogoutDashboardDTOout;
 import com.example.RemomaxBE.Model.LoginModel;
 import com.example.RemomaxBE.Model.LosLoginModel;
+import com.example.RemomaxBE.Model.MassageModel;
 import com.example.RemomaxBE.Model.ReceiveLoginModel;
 import com.example.RemomaxBE.Repository.LoginRepository;
 import com.example.RemomaxBE.Repository.ReceiveLoginRepository;
@@ -23,12 +24,13 @@ public class ReceiveLoginService {
     @Autowired
     RCCService rccService;
 
-    public void receivelLogin(LoginModel loginModel,String clientIp) {
+    public void receivelLogin(LoginModel loginModel, String clientIp, MassageModel massageModel) {
         ReceiveLoginModel receiveLoginModel = new ReceiveLoginModel();
         receiveLoginModel.setRCC(rccService.createRcc().getCheck_rcc());
         receiveLoginModel.setRCCU(loginModel.getRCC());
         receiveLoginModel.setInOrOut("0");
         receiveLoginModel.setIP(clientIp);
+        receiveLoginModel.setRccLogin(massageModel.getID());
         receiveLoginRepository.save(receiveLoginModel);
     }
 
@@ -36,6 +38,7 @@ public class ReceiveLoginService {
         ReceiveLoginModel receiveLoginModel = new ReceiveLoginModel();
         receiveLoginModel.setRCC(rccService.createRcc().getCheck_rcc());
         receiveLoginModel.setRCCU(rccRactiveDTO.getRCC());
+        receiveLoginModel.setRccLogin(rccRactiveDTO.getRCCLogin());
         receiveLoginModel.setIP(clientIp);
         receiveLoginModel.setInOrOut("1");
         receiveLoginRepository.save(receiveLoginModel);
