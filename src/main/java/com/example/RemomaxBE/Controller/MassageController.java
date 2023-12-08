@@ -1,7 +1,6 @@
 package com.example.RemomaxBE.Controller;
 
-import com.example.RemomaxBE.DTO.LoginDTO;
-import com.example.RemomaxBE.DTO.MassageDTO;
+import com.example.RemomaxBE.DTO.*;
 import com.example.RemomaxBE.Model.LoginModel;
 import com.example.RemomaxBE.Model.MassageModel;
 import com.example.RemomaxBE.Service.LoginService;
@@ -16,17 +15,20 @@ public class MassageController {
     @Autowired
     MassageService massageService;
 
-    @GetMapping("/massage")
-    public List<MassageModel> getAllMassage() {
-        return massageService.getAllMassage();
+    @PostMapping("/massage/search")
+    public List<MassageModel> getMassageSearch(@RequestBody SearchDTO searchDTO) {
+        return massageService.getMassage(searchDTO);
     }
-    @GetMapping("/massage/{ID}")
-    public MassageModel getMassageById(@PathVariable Long ID) {
-        return massageService.getMassage(ID);
+    @PostMapping("/massage/data")
+    public MassageModel getMassageById(@RequestBody SearchDTO searchDTO) {
+        return massageService.getMassageById(searchDTO);
     }
-
     @PostMapping("/massage")
     public MassageModel createMassage(@RequestBody MassageDTO massageDTO) {
         return massageService.saveMassage(massageDTO);
+    }
+    @PutMapping("/massage/edit")
+    public MassageModel editMassage(@RequestBody EditMassageDTO editMassageDTO) {
+        return massageService.editMassage(editMassageDTO);
     }
 }

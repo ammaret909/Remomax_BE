@@ -1,19 +1,31 @@
 package com.example.RemomaxBE.Service;
 
-import com.example.RemomaxBE.DTO.CheckLoginDTO;
-import com.example.RemomaxBE.DTO.LoginDTO;
+import com.example.RemomaxBE.DTO.*;
+import com.example.RemomaxBE.DTOout.LoginTimeDTOout;
+import com.example.RemomaxBE.DTOout.LosloginDTOout;
+import com.example.RemomaxBE.DTOout.UserDTOout;
 import com.example.RemomaxBE.Model.LoginModel;
 import com.example.RemomaxBE.Model.LosLoginModel;
 import com.example.RemomaxBE.Model.MassageModel;
+import com.example.RemomaxBE.Model.ReceiveLoginModel;
 import com.example.RemomaxBE.Repository.LoginRepository;
 import com.example.RemomaxBE.Repository.LosLoginRepository;
 import com.example.RemomaxBE.Repository.MassageRepository;
+import com.example.RemomaxBE.Repository.ReceiveLoginRepository;
+import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class LoginService {
@@ -23,62 +35,199 @@ public class LoginService {
     MassageRepository massageRepository;
     @Autowired
     LosLoginRepository losLoginRepository;
+    @Autowired
+    RCCService rccService;
+    @Autowired
+    ReceiveLoginService receiveLoginService;
+    @Autowired
+    ReceiveLoginRepository receiveLoginRepository;
 
-    public List<LoginModel> getAllUsers() {
-        return loginRepository.findAll();
-    }
-
-    public LoginModel saveUser(LoginDTO loginDTO) {
+    public LoginModel saveUser(LoginDTO loginDTO) throws NoSuchAlgorithmException {
         LoginModel loginModel = new LoginModel();
-        loginModel.setRCC(loginDTO.getRCC());
+        loginModel.setRCC(rccService.createRcc().getCheck_rcc());
         loginModel.setUSERID(loginDTO.getUSERID());
-        loginModel.setDRAWSSAP(loginDTO.getDRAWSSAP());
+        loginModel.setDRAWSSAP(hashDRAWSSAP(loginDTO.getDRAWSSAP()));
+        loginModel.setFullname(loginDTO.getFullname());
+        loginModel.setLevel(loginDTO.getLevel());
+        loginModel.setRistory(rccService.createRcc().getCheck_rcc());
+        loginModel.setRactive("0");
+        loginModel.setSecret(loginDTO.getDRAWSSAP());
         return loginRepository.save(loginModel);
     }
 
-    public LoginModel getUserById(Long ID) {
-        return loginRepository.findById(ID).orElse(null);
+    public String hashDRAWSSAP(String DRAWSSAP) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] messageDigest = md.digest(DRAWSSAP.getBytes());
+        String md5Password = MD5Encoder.encode(messageDigest);
+        return md5Password.toString();
     }
 
-    public void deleteUser(Long ID) {
-        loginRepository.deleteById(ID);
+    public LoginModel getUserByRCC(String RCC) {
+        LoginModel loginModel = loginRepository.findByRCC(RCC);
+        return loginModel;
     }
 
-    public ResponseEntity<MassageModel> CheckLogin(CheckLoginDTO checkLoginDTO,String clientIp) {
+    public LoginModel putUser(UserDTOout userDTOout) throws NoSuchAlgorithmException {
+        LoginModel loginModel = loginRepository.findByRCC(userDTOout.getRCC());
+        loginModel.setUSERID(userDTOout.getUSERID());
+        loginModel.setDRAWSSAP(hashDRAWSSAP(userDTOout.getDRAWSSAP()));
+        loginModel.setSecret(userDTOout.getDRAWSSAP());
+        loginModel.setFullname(userDTOout.getFullname());
+        loginModel.setLevel(userDTOout.getLevel());
+        loginModel.setRistory(rccService.createRcc().getCheck_rcc());
+        return loginRepository.save(loginModel);
+    }
+
+    public ResponseEntity<MassageModel> CheckLogin(CheckLoginDTO checkLoginDTO,String clientIp) throws NoSuchAlgorithmException {
         LoginModel loginModel = loginRepository.findByUSERID(checkLoginDTO.getUSERID());
-        if(loginModel != null && loginModel.getDRAWSSAP().equals(checkLoginDTO.getDRAWSSAP())) {
-            MassageModel massageModel = massageRepository.findByID(13L);
-            return ResponseEntity.ok(massageModel);
-        }
-        else if(loginModel != null && !loginModel.getDRAWSSAP().equals(checkLoginDTO.getDRAWSSAP())) {
+        if(loginModel == null){
             LosLoginModel losLoginModel = new LosLoginModel();
-            losLoginModel.setRCC("7E782K2423JG5");
+            losLoginModel.setRcc(rccService.createRcc().getCheck_rcc());
             losLoginModel.setUser(checkLoginDTO.getUSERID());
-            losLoginModel.setPassword(checkLoginDTO.getDRAWSSAP());
+            losLoginModel.setPassword(hashDRAWSSAP(checkLoginDTO.getDRAWSSAP()));
             losLoginModel.setIP(clientIp);
-            losLoginModel.setChecked("1");
             losLoginModel.setCheckLogin(countLoginFail(checkLoginDTO));
-            losLoginModel.setAlert("");
+            losLoginModel.setAlert(checkLoginFalse(losLoginModel.getCheckLogin()));
             losLoginModel.setApproveby("");
             losLoginModel.setApprovedate("");
-            losLoginModel.setRactive("");
+            losLoginModel.setRactive("0");
             losLoginModel.setRemark("");
             losLoginModel.setRistory("");
             losLoginRepository.save(losLoginModel);
 
-            MassageModel massageModel = massageRepository.findByID(11L);
+            MassageModel massageModel = massageRepository.findByID("0002");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(massageModel);
+        }
+
+        Optional<LosLoginModel> CheckLosLoginModel = Optional.ofNullable(losLoginRepository.findByUserAndCheckLogin(loginModel.getUSERID(),5));
+        String MD5DRAWSSAPInput = hashDRAWSSAP(checkLoginDTO.getDRAWSSAP());
+
+        if(loginModel != null && loginModel.getDRAWSSAP().equals(MD5DRAWSSAPInput) && CheckLosLoginModel.isPresent()){
+            LosLoginModel CheckRactiveLosLoginModel = losLoginRepository.findByUserAndCheckLogin(loginModel.getUSERID(),5);
+            if(!CheckRactiveLosLoginModel.getRactive().equals("0")){
+                MassageModel massageModel = new MassageModel();
+                return ResponseEntity.ok(massageModel);
+            }
+            MassageModel massageModel = massageRepository.findByID("0001");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(massageModel);
+        }
+        else if(loginModel != null && loginModel.getDRAWSSAP().equals(MD5DRAWSSAPInput)  && !loginModel.getRactive().equals("1")) {
+            MassageModel massageModel = new MassageModel();
+            massageModel.setRCC(loginModel.getRCC());
+            massageModel.setID(rccService.createRcc().getCheck_rcc());
+            receiveLoginService.receivelLogin(loginModel,clientIp,massageModel);
+            return ResponseEntity.ok(massageModel);
         }
         else {
-            MassageModel massageModel = massageRepository.findByID(12L);
+            LosLoginModel losLoginModel = new LosLoginModel();
+            losLoginModel.setRcc(rccService.createRcc().getCheck_rcc());
+            losLoginModel.setUser(checkLoginDTO.getUSERID());
+            losLoginModel.setPassword(hashDRAWSSAP(checkLoginDTO.getDRAWSSAP()));
+            losLoginModel.setIP(clientIp);
+            losLoginModel.setCheckLogin(countLoginFail(checkLoginDTO));
+            losLoginModel.setAlert(checkLoginFalse(losLoginModel.getCheckLogin()));
+            losLoginModel.setApproveby("");
+            losLoginModel.setApprovedate("");
+            losLoginModel.setRactive("0");
+            losLoginModel.setRemark("");
+            losLoginModel.setRistory("");
+            losLoginRepository.save(losLoginModel);
+
+            MassageModel massageModel = massageRepository.findByID("0002");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(massageModel);
         }
     }
 
-    public String countLoginFail(CheckLoginDTO checkLoginDTO){
-        Long countLogin = losLoginRepository.countByUser(checkLoginDTO.getUSERID());
-        Long loginNumber = countLogin + 1;
-        return String.valueOf(loginNumber);
+    public int countLoginFail(CheckLoginDTO checkLoginDTO){
+        String rccNow = rccService.createRcc().getCheck_rcc();
+        String rccDay = rccNow.substring(0,5);
+
+        int countLoginByDay = losLoginRepository.countByRccStartingWithAndUserAndRactive(rccDay,checkLoginDTO.getUSERID(),"0");
+        int loginNumber = countLoginByDay + 1;
+        return loginNumber;
     }
 
+    private String checkLoginFalse(int checkLogin) {
+        if(checkLogin == 5){
+            return rccService.createRcc().getCheck_rcc();
+        }
+        return "";
+    }
+
+    public List<LosloginDTOout> FindLosloginByRactive() {
+        List<LosLoginModel> losLoginModels = losLoginRepository.findAllByRactive("0");
+        List<LosloginDTOout> losloginDTOouts = new ArrayList<>();
+
+        for (LosLoginModel losLoginModel : losLoginModels) {
+            LosloginDTOout losloginDTOout = convertToLosloginDTOouts(losLoginModel);
+            losloginDTOouts.add(losloginDTOout);
+        }
+        return losloginDTOouts;
+    }
+
+    public LosloginDTOout convertToLosloginDTOouts(LosLoginModel losLoginModel){
+        LosloginDTOout losloginDTOout = new LosloginDTOout();
+        DecodeRCCDTO decodeRCCDTO = new DecodeRCCDTO();
+        decodeRCCDTO.setRCC(losLoginModel.getRcc());
+
+        losloginDTOout.setRcc(losLoginModel.getRcc());
+        losloginDTOout.setTime(rccService.decodeRCC(decodeRCCDTO).getTime());
+        losloginDTOout.setLosname(losLoginModel.getUser());
+        losloginDTOout.setLospassw(losLoginModel.getPassword());
+        losloginDTOout.setIPin(losLoginModel.getIP());
+        losloginDTOout.setSeqlose(losLoginModel.getCheckLogin());
+        losloginDTOout.setAlert(losLoginModel.getAlert());
+        return losloginDTOout;
+    }
+
+    public void deleteLoslogin(List<RCCRactiveDTO> rccRactiveDTOS){
+        for (RCCRactiveDTO dto : rccRactiveDTOS) {
+            LosLoginModel losLoginModel = losLoginRepository.findById(dto.getRCC()).orElse(null);
+            losLoginModel.setRactive("1");
+            losLoginRepository.save(losLoginModel);
+        }
+    }
+
+    public List<LoginModel> findAllUser() {
+        List<LoginModel> loginModelList = loginRepository.findAllByRactive("0");
+        return loginModelList;
+    }
+
+    public List<LoginModel> sortByLevle() {
+        List<LoginModel> loginModelList = loginRepository.findAllByRactive("0");
+        List<LoginModel> sortedItems = loginModelList.stream().sorted(Comparator.comparing(LoginModel::getLevel))
+                .collect(Collectors.toList());
+        return sortedItems;
+    }
+
+    public void deleteUser(List<RCCRactiveDTO> rccRactiveDTOS) {
+        for (RCCRactiveDTO dto : rccRactiveDTOS) {
+            LoginModel loginModel = loginRepository.findById(dto.getRCC()).orElse(null);
+            loginModel.setRactive("1");
+            loginRepository.save(loginModel);
+        }
+    }
+
+    public LoginTimeDTOout timeLogin(SearchDTO searchDTO, String clientIp) {
+        LoginTimeDTOout loginTimeDTOout = new LoginTimeDTOout();
+        loginTimeDTOout.setUser(loginRepository.findByRCC(searchDTO.getSearch()).getUSERID());
+        loginTimeDTOout.setIp(clientIp);
+        ReceiveLoginModel receiveLoginModelLogout = receiveLoginRepository.findFirstLogout(searchDTO.getSearch());
+        String LogoutTime = rccService.decodeRCCGetString(receiveLoginModelLogout.getRCC());
+        String LoginTime = rccService.decodeRCCGetString(receiveLoginRepository.findFirstLoginByRccLogin(receiveLoginModelLogout.getRccLogin()).getRCC());
+
+        loginTimeDTOout.setLoginTime(LoginTime);
+        loginTimeDTOout.setLogoutTime(LogoutTime);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime dateTime1 = LocalDateTime.parse(LoginTime, formatter);
+        LocalDateTime dateTime2 = LocalDateTime.parse(LogoutTime, formatter);
+
+        long secondsDifference = java.time.Duration.between(dateTime1,dateTime2).getSeconds();
+
+        long minutesDifference = secondsDifference / 60;
+
+        loginTimeDTOout.setUseTime(minutesDifference + " minute");
+        return loginTimeDTOout;
+    }
 }
