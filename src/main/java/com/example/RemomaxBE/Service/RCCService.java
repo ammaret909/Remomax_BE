@@ -22,7 +22,7 @@ public class RCCService {
         LocalDateTime timeDate = LocalDateTime.now();
 
         String year = Integer.toHexString(timeDate.getYear()).toUpperCase();
-        String month = Integer.toHexString(timeDate.getMonthValue());
+        String month = Integer.toHexString(timeDate.getMonthValue()).toUpperCase();
         String day = encodeDay(timeDate.getDayOfMonth());
         String hour = encodeHour(timeDate.getHour());
         String minute = checkMinute(timeDate.getMinute());
